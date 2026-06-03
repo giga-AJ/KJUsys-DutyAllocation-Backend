@@ -73,7 +73,7 @@ public class FacultyService extends MongoDataAccess {
     public Document getFacultyById(String id) throws DataAccessException {
         LOGGER.info("Fetching faculty by id: {}", id);
 
-        Bson filter = eq("_id", new ObjectId(id));
+        Bson filter = eq("employeeId", id);
 
         Bson projection = fields(
                 include("employeeId", "name", "email",

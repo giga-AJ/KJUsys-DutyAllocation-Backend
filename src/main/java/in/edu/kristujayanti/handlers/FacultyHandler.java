@@ -2,6 +2,7 @@ package in.edu.kristujayanti.handlers;
 
 import in.edu.kristujayanti.enums.ResponseType;
 import in.edu.kristujayanti.enums.StatusCode;
+import in.edu.kristujayanti.exception.DataAccessException;
 import in.edu.kristujayanti.services.FacultyService;
 import in.edu.kristujayanti.util.ResponseUtil;
 import io.vertx.core.Handler;
@@ -12,7 +13,6 @@ import io.vertx.ext.web.RoutingContext;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import in.edu.kristujayanti.exception.DataAccessException;
 
 import java.util.List;
 
@@ -23,10 +23,17 @@ public class FacultyHandler implements Handler<RoutingContext> {
 
     private final FacultyService facultyService;
 
+    // ─────────────────────────────────────────
+    // Constructor
+    // ─────────────────────────────────────────
     public FacultyHandler(FacultyService facultyService) {
         this.facultyService = facultyService;
     }
 
+    // ─────────────────────────────────────────
+    // Main handle method — entry point
+    // decides which method to call
+    // ─────────────────────────────────────────
     @Override
     public void handle(RoutingContext routingContext) {
 
@@ -35,22 +42,20 @@ public class FacultyHandler implements Handler<RoutingContext> {
 
         try {
 
-            // GET /faculty
+            // GET /faculty — get all faculty
             if (path.endsWith("/faculty")
                     && routingContext.request().method().name().equals("GET")) {
 
                 handleGetAllFaculty(routingContext, response);
-            }
 
-            // GET /faculty/:id
-            else if (path.contains("/faculty/")
+                // GET /faculty/:id — get one faculty
+            } else if (path.contains("/faculty/")
                     && routingContext.request().method().name().equals("GET")) {
 
                 String id = routingContext.pathParam("id");
                 handleGetFacultyById(response, id);
-            }
 
-            else {
+            } else {
 
                 ResponseUtil.createResponse(
                         response,
@@ -62,58 +67,48 @@ public class FacultyHandler implements Handler<RoutingContext> {
             }
 
         } catch (Exception e) {
-
-            LOGGER.error("Error in FacultyHandler", e);
-
+            LOGGER.error("Error in FacultyHandler: {}", e.getMessage(), e);
             ResponseUtil.createResponse(
                     response,
                     ResponseType.ERROR,
                     StatusCode.INTERNAL_SERVER_ERROR,
-                    new JsonObject().put("error", "Internal Server Error"),
+                    new JsonObject()
+                            .put("error", "Internal Server Error")
+                            .put("detail", e.getMessage()),
                     new JsonArray()
             );
         }
-    }
+    } // ← end of handle method
 
+
+    // ─────────────────────────────────────────
+    // Handle GET all faculty
+    // ─────────────────────────────────────────
     private void handleGetAllFaculty(
             RoutingContext routingContext,
             HttpServerResponse response
     ) throws DataAccessException {
 
-        String department =
-                routingContext.request().getParam("department");
-
-        String status =
-                routingContext.request().getParam("status");
-
-        String search =
-                routingContext.request().getParam("search");
+        String department = routingContext.request().getParam("department");
+        String status     = routingContext.request().getParam("status");
+        String search     = routingContext.request().getParam("search");
 
         List<Document> facultyList;
 
         if (search != null && !search.isEmpty()) {
-
-            facultyList =
-                    facultyService.searchFacultyByName(search);
+            facultyList = facultyService.searchFacultyByName(search);
 
         } else if (department != null && !department.isEmpty()) {
-
-            facultyList =
-                    facultyService.getFacultyByDepartment(department);
+            facultyList = facultyService.getFacultyByDepartment(department);
 
         } else if (status != null && !status.isEmpty()) {
-
-            facultyList =
-                    facultyService.getFacultyByStatus(status);
+            facultyList = facultyService.getFacultyByStatus(status);
 
         } else {
-
-            facultyList =
-                    facultyService.getAllFaculty();
+            facultyList = facultyService.getAllFaculty();
         }
 
         JsonArray jsonArray = new JsonArray();
-
         for (Document doc : facultyList) {
             jsonArray.add(new JsonObject(doc.toJson()));
         }
@@ -125,18 +120,20 @@ public class FacultyHandler implements Handler<RoutingContext> {
                 new JsonObject().put("faculty", jsonArray),
                 new JsonArray()
         );
-    }
+    } // ← end of handleGetAllFaculty
 
+
+    // ─────────────────────────────────────────
+    // Handle GET faculty by ID
+    // ─────────────────────────────────────────
     private void handleGetFacultyById(
             HttpServerResponse response,
             String id
     ) throws DataAccessException {
 
-        Document faculty =
-                facultyService.getFacultyById(id);
+        Document faculty = facultyService.getFacultyById(id);
 
         if (faculty == null) {
-
             ResponseUtil.createResponse(
                     response,
                     ResponseType.ERROR,
@@ -144,7 +141,6 @@ public class FacultyHandler implements Handler<RoutingContext> {
                     new JsonObject().put("error", "Faculty not found"),
                     new JsonArray()
             );
-
             return;
         }
 
@@ -155,5 +151,7 @@ public class FacultyHandler implements Handler<RoutingContext> {
                 new JsonObject(faculty.toJson()),
                 new JsonArray()
         );
-    }
-}
+    } // ← end of handleGetFacultyById
+
+
+} // ← end of class
