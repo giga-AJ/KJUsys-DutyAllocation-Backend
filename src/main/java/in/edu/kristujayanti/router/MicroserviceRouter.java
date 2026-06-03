@@ -7,6 +7,8 @@ import in.edu.kristujayanti.constants.ContextRoutingURLName;
 import in.edu.kristujayanti.constants.MicroserviceRoutingURLNames;
 import in.edu.kristujayanti.services.HealthService;
 import in.edu.kristujayanti.handlers.HealthHandler;
+import in.edu.kristujayanti.services.FacultyService;
+import in.edu.kristujayanti.handlers.FacultyHandler;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpHeaders;
@@ -50,31 +52,34 @@ public class MicroserviceRouter extends RouterBase {
         public void setUpRouters() {
                 // Define allowed headers for CORS
                 Set<String> allowHeaders = Stream.of(
-                                CommonKeys.CONTENT_TYPE,
-                                CommonKeys.X_AUTH_CORRELATION_ID,
-                                HttpHeaders.AUTHORIZATION.toString(),
-                                "Access-Control-Allow-Origin").collect(Collectors.toSet());
+                        CommonKeys.CONTENT_TYPE,
+                        CommonKeys.X_AUTH_CORRELATION_ID,
+                        HttpHeaders.AUTHORIZATION.toString(),
+                        "Access-Control-Allow-Origin").collect(Collectors.toSet());
 
                 // Define allowed HTTP methods for CORS
                 Set<HttpMethod> allowMethods = Stream.of(
-                                HttpMethod.GET,
-                                HttpMethod.POST,
-                                HttpMethod.PUT).collect(Collectors.toSet());
+                        HttpMethod.GET,
+                        HttpMethod.POST,
+                        HttpMethod.PUT).collect(Collectors.toSet());
 
                 // Setup CORS and Body Handlers
                 this.router.route().handler(CorsHandler.create()
-                                .addOrigin("*")
-                                .allowCredentials(true)
-                                .allowedHeaders(allowHeaders)
-                                .allowedMethods(allowMethods));
+                        .addOrigin("*")
+                        .allowCredentials(true)
+                        .allowedHeaders(allowHeaders)
+                        .allowedMethods(allowMethods));
 
                 // add routes here
-                // health route
+// health route
                 HealthService healthService = new HealthService(this.mongoDatabase);
                 addRoute(HttpMethod.GET, MicroserviceRoutingURLNames.HEALTH_URL, new HealthHandler(healthService));
 
+// ── Faculty routes ──────────────────────────────
+                FacultyService facultyService = new FacultyService(this.mongoDatabase);
+                addRoute(HttpMethod.GET, MicroserviceRoutingURLNames.FACULTY_GET_ALL_URL, new FacultyHandler(facultyService));
+                addRoute(HttpMethod.GET, MicroserviceRoutingURLNames.FACULTY_GET_BY_ID_URL, new FacultyHandler(facultyService));
         }
-
         /**
          * Helper method to add routes with the specified method, path, and handler.
          *

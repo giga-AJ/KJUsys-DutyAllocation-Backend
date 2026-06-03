@@ -1,15 +1,13 @@
 package in.edu.kristujayanti.constants;
 
-/**
- * MicroserviceRoutingURLNames interface defines constants for various
- * routing URL paths used in the application.
- * These constants can be used throughout the application to ensure consistency
- * and avoid hardcoding URL paths.
- */
 public interface MicroserviceRoutingURLNames {
-    // Wildcard URL path for general API routing
+
     String API_WILDCARD_URL = "*";
+    String HEALTH_URL       = "/health";
 
-    String HEALTH_URL = "/health";
-
+    // Faculty URLs
+    String FACULTY_GET_ALL_URL = "/faculty";
+    String FACULTY_GET_BY_ID_URL = "/faculty/:id";
+    String FACULTY_ADD_URL = "/faculty/add";
+    String FACULTY_UPDATE_STATUS_URL = "/faculty/update-status/:id";
 }
