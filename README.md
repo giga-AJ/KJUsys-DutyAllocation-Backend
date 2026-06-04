@@ -61,4 +61,4 @@ java -jar target/KJUsys-DutyAllocation-1.0-SNAPSHOT-fat.jar \
 *   **URL**: `/kjusys-api/duty-allocation/health`
 *   **Method**: `GET`
 *   **Description**: Returns the status of the microservice.
-
+*   **Added login feature**
