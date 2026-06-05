@@ -40,6 +40,7 @@ public class FacultyHandler implements Handler<RoutingContext> {
         String path = routingContext.normalizedPath();
         HttpServerResponse response = routingContext.response();
 
+
         try {
 
             // GET /faculty — get all faculty
@@ -54,6 +55,25 @@ public class FacultyHandler implements Handler<RoutingContext> {
 
                 String id = routingContext.pathParam("id");
                 handleGetFacultyById(response, id);
+
+
+
+            } else if (path.endsWith("/faculty/add")
+                    && routingContext.request().method().name().equals("POST")) {
+
+                handleCreateFaculty(routingContext, response);
+
+            } else if (path.contains("/faculty")
+                    && routingContext.request().method().name().equals("PUT")) {
+
+                String id = routingContext.pathParam("id");
+                handleUpdateFaculty(routingContext, response, id);
+
+            } else if (path.contains("/faculty/")
+                    && routingContext.request().method().name().equals("DELETE")) {
+
+                String id = routingContext.pathParam("id");
+                handleDeleteFaculty(response, id);
 
             } else {
 
@@ -90,8 +110,8 @@ public class FacultyHandler implements Handler<RoutingContext> {
     ) throws DataAccessException {
 
         String department = routingContext.request().getParam("department");
-        String status     = routingContext.request().getParam("status");
-        String search     = routingContext.request().getParam("search");
+        String status = routingContext.request().getParam("status");
+        String search = routingContext.request().getParam("search");
 
         List<Document> facultyList;
 
@@ -109,6 +129,7 @@ public class FacultyHandler implements Handler<RoutingContext> {
         }
 
         JsonArray jsonArray = new JsonArray();
+
         for (Document doc : facultyList) {
             jsonArray.add(new JsonObject(doc.toJson()));
         }
@@ -120,12 +141,8 @@ public class FacultyHandler implements Handler<RoutingContext> {
                 new JsonObject().put("faculty", jsonArray),
                 new JsonArray()
         );
-    } // ← end of handleGetAllFaculty
+    }
 
-
-    // ─────────────────────────────────────────
-    // Handle GET faculty by ID
-    // ─────────────────────────────────────────
     private void handleGetFacultyById(
             HttpServerResponse response,
             String id
@@ -151,7 +168,120 @@ public class FacultyHandler implements Handler<RoutingContext> {
                 new JsonObject(faculty.toJson()),
                 new JsonArray()
         );
-    } // ← end of handleGetFacultyById
+    }
 
+    private void handleCreateFaculty(
+            RoutingContext routingContext,
+            HttpServerResponse response
+    ) {
 
-} // ← end of class
+        try {
+
+            JsonObject body = routingContext.body().asJsonObject();
+
+            Document facultyDoc =
+                    Document.parse(body.encode());
+
+            boolean created =
+                    facultyService.addFaculty(facultyDoc);
+
+            if (!created) {
+
+                ResponseUtil.createResponse(
+                        response,
+                        ResponseType.ERROR,
+                        StatusCode.BAD_REQUEST,
+                        new JsonObject()
+                                .put("error",
+                                        "Employee ID already exists"),
+                        new JsonArray()
+                );
+                return;
+            }
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.SUCCESS,
+                    StatusCode.TWOHUNDRED,
+                    new JsonObject()
+                            .put("message",
+                                    "Faculty added successfully"),
+                    new JsonArray()
+            );
+
+        } catch (Exception e) {
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.ERROR,
+                    StatusCode.INTERNAL_SERVER_ERROR,
+                    new JsonObject()
+                            .put("error", e.getMessage()),
+                    new JsonArray()
+            );
+        }
+    }
+
+    private void handleUpdateFaculty(
+            RoutingContext routingContext,
+            HttpServerResponse response,
+            String id
+    ) {
+
+        try {
+
+            JsonObject body =
+                    routingContext.body().asJsonObject();
+
+            String status =
+                    body.getString("status");
+
+            boolean updated =
+                    facultyService.updateFacultyStatus(
+                            id,
+                            status
+                    );
+
+            if (!updated) {
+
+                ResponseUtil.createResponse(
+                        response,
+                        ResponseType.ERROR,
+                        StatusCode.FILE_NOT_FOUND,
+                        new JsonObject()
+                                .put("error",
+                                        "Faculty not found"),
+                        new JsonArray()
+                );
+                return;
+            }
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.SUCCESS,
+                    StatusCode.TWOHUNDRED,
+                    new JsonObject()
+                            .put("message",
+                                    "Faculty status updated"),
+                    new JsonArray()
+            );
+
+        } catch (Exception e) {
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.ERROR,
+                    StatusCode.INTERNAL_SERVER_ERROR,
+                    new JsonObject()
+                            .put("error", e.getMessage()),
+                    new JsonArray()
+            );
+        }
+    }
+
+    private void handleDeleteFaculty(
+            HttpServerResponse response,
+            String id
+    ) {
+
+    }}// ← end of class

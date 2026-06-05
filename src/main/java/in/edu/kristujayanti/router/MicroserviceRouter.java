@@ -9,6 +9,8 @@ import in.edu.kristujayanti.services.HealthService;
 import in.edu.kristujayanti.handlers.HealthHandler;
 import in.edu.kristujayanti.services.FacultyService;
 import in.edu.kristujayanti.handlers.FacultyHandler;
+import in.edu.kristujayanti.services.DutyService;
+import in.edu.kristujayanti.handlers.DutyHandler;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpHeaders;
@@ -77,8 +79,37 @@ public class MicroserviceRouter extends RouterBase {
 
 // ── Faculty routes ──────────────────────────────
                 FacultyService facultyService = new FacultyService(this.mongoDatabase);
+                DutyService dutyService =
+                        new DutyService(this.mongoDatabase);
                 addRoute(HttpMethod.GET, MicroserviceRoutingURLNames.FACULTY_GET_ALL_URL, new FacultyHandler(facultyService));
                 addRoute(HttpMethod.GET, MicroserviceRoutingURLNames.FACULTY_GET_BY_ID_URL, new FacultyHandler(facultyService));
+                addRoute(
+                        HttpMethod.POST,
+                        MicroserviceRoutingURLNames.FACULTY_ADD_URL,
+                        new FacultyHandler(facultyService)
+                );
+                addRoute(
+                        HttpMethod.PUT,
+                        MicroserviceRoutingURLNames.FACULTY_UPDATE_STATUS_URL,
+                        new FacultyHandler(facultyService)
+                );
+                addRoute(
+                        HttpMethod.GET,
+                        MicroserviceRoutingURLNames.DUTY_GET_ALL_URL,
+                        new DutyHandler(dutyService)
+                );
+
+                addRoute(
+                        HttpMethod.GET,
+                        MicroserviceRoutingURLNames.DUTY_GET_BY_ID_URL,
+                        new DutyHandler(dutyService)
+                );
+
+                addRoute(
+                        HttpMethod.POST,
+                        MicroserviceRoutingURLNames.DUTY_ADD_URL,
+                        new DutyHandler(dutyService)
+                );
         }
         /**
          * Helper method to add routes with the specified method, path, and handler.

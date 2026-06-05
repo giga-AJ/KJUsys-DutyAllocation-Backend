@@ -284,4 +284,61 @@ public class FacultyService extends MongoDataAccess {
         result.into(availabilityList);
         return availabilityList;
     }
+
+
+    // ─────────────────────────────────────────
+// 6. ADD FACULTY
+// Powers → Faculty Creation Screen
+// ─────────────────────────────────────────
+    public boolean addFaculty(Document facultyDoc) throws DataAccessException {
+
+        LOGGER.info("Adding faculty: {}", facultyDoc.getString("employeeId"));
+
+        // Check duplicate employeeId
+        Bson filter = eq("employeeId", facultyDoc.getString("employeeId"));
+
+        FindIterable<Document> existing = findDocuments(
+                mongoDatabase,
+                CollectionNames.FACULTY,
+                filter,
+                new Document(),
+                new Document()
+        );
+
+        if (existing.first() != null) {
+            return false;
+        }
+
+        mongoDatabase
+                .getCollection(CollectionNames.FACULTY)
+                .insertOne(facultyDoc);
+
+        return true;
+    }
+
+    // ─────────────────────────────────────────
+// 7. UPDATE FACULTY STATUS
+// Powers → Active / OnLeave / Unavailable
+// ─────────────────────────────────────────
+    public boolean updateFacultyStatus(String employeeId,
+                                       String status)
+            throws DataAccessException {
+
+        LOGGER.info("Updating status for {} to {}",
+                employeeId,
+                status);
+
+        Document filter =
+                new Document("employeeId", employeeId);
+
+        Document update =
+                new Document("$set",
+                        new Document("status", status));
+
+        var result = mongoDatabase
+                .getCollection(CollectionNames.FACULTY)
+                .updateOne(filter, update);
+
+        return result.getModifiedCount() > 0;
+    }
 }
