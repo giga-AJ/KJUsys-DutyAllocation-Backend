@@ -11,6 +11,12 @@ import in.edu.kristujayanti.services.FacultyService;
 import in.edu.kristujayanti.handlers.FacultyHandler;
 import in.edu.kristujayanti.services.DutyService;
 import in.edu.kristujayanti.handlers.DutyHandler;
+import in.edu.kristujayanti.services.DutyAssignmentService;
+import in.edu.kristujayanti.handlers.DutyAssignmentHandler;
+import in.edu.kristujayanti.services.SwapRequestService;
+import in.edu.kristujayanti.handlers.SwapRequestHandler;
+import in.edu.kristujayanti.services.AuditLogService;
+import in.edu.kristujayanti.handlers.AuditLogHandler;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpHeaders;
@@ -79,8 +85,11 @@ public class MicroserviceRouter extends RouterBase {
 
 // ── Faculty routes ──────────────────────────────
                 FacultyService facultyService = new FacultyService(this.mongoDatabase);
-                DutyService dutyService =
-                        new DutyService(this.mongoDatabase);
+                DutyService dutyService = new DutyService(this.mongoDatabase);
+                DutyAssignmentService dutyAssignmentService = new DutyAssignmentService(this.mongoDatabase);
+                SwapRequestService swapRequestService = new SwapRequestService(this.mongoDatabase);
+                AuditLogService auditLogService = new AuditLogService(this.mongoDatabase);
+
                 addRoute(HttpMethod.GET, MicroserviceRoutingURLNames.FACULTY_GET_ALL_URL, new FacultyHandler(facultyService));
                 addRoute(HttpMethod.GET, MicroserviceRoutingURLNames.FACULTY_GET_BY_ID_URL, new FacultyHandler(facultyService));
                 addRoute(
@@ -109,6 +118,59 @@ public class MicroserviceRouter extends RouterBase {
                         HttpMethod.POST,
                         MicroserviceRoutingURLNames.DUTY_ADD_URL,
                         new DutyHandler(dutyService)
+                );
+
+                addRoute(
+                        HttpMethod.GET,
+                        MicroserviceRoutingURLNames.ASSIGNMENT_GET_ALL_URL,
+                        new DutyAssignmentHandler(dutyAssignmentService)
+                );
+
+                addRoute(
+                        HttpMethod.GET,
+                        MicroserviceRoutingURLNames.ASSIGNMENT_GET_BY_FACULTY_URL,
+                        new DutyAssignmentHandler(dutyAssignmentService)
+                );
+
+                addRoute(
+                        HttpMethod.POST,
+                        MicroserviceRoutingURLNames.ASSIGNMENT_ADD_URL,
+                        new DutyAssignmentHandler(dutyAssignmentService)
+                );
+                addRoute(
+                        HttpMethod.GET,
+                        MicroserviceRoutingURLNames.SWAP_GET_ALL_URL,
+                        new SwapRequestHandler(swapRequestService)
+                );
+
+                addRoute(
+                        HttpMethod.GET,
+                        MicroserviceRoutingURLNames.SWAP_GET_BY_STATUS_URL,
+                        new SwapRequestHandler(swapRequestService)
+                );
+
+                addRoute(
+                        HttpMethod.POST,
+                        MicroserviceRoutingURLNames.SWAP_ADD_URL,
+                        new SwapRequestHandler(swapRequestService)
+                );
+
+                addRoute(
+                        HttpMethod.GET,
+                        MicroserviceRoutingURLNames.AUDIT_GET_ALL_URL,
+                        new AuditLogHandler(auditLogService)
+                );
+
+                addRoute(
+                        HttpMethod.GET,
+                        MicroserviceRoutingURLNames.AUDIT_GET_BY_ACTION_URL,
+                        new AuditLogHandler(auditLogService)
+                );
+
+                addRoute(
+                        HttpMethod.POST,
+                        MicroserviceRoutingURLNames.AUDIT_ADD_URL,
+                        new AuditLogHandler(auditLogService)
                 );
         }
         /**

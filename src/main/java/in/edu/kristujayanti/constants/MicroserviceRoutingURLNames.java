@@ -15,4 +15,19 @@ public interface MicroserviceRoutingURLNames {
     String DUTY_GET_ALL_URL              = "/duties";
     String DUTY_GET_BY_ID_URL            = "/duties/:id";
     String DUTY_ADD_URL                  = "/duties/add";
+
+    // Duty Assignment URLs
+    String ASSIGNMENT_GET_ALL_URL = "/assignments";
+    String ASSIGNMENT_ADD_URL = "/assignments/assign";
+    String ASSIGNMENT_GET_BY_FACULTY_URL = "/assignments/faculty/:facultyId";
+
+    // Swap Request URLs
+    String SWAP_GET_ALL_URL = "/swap-requests";
+    String SWAP_ADD_URL = "/swap-requests/add";
+    String SWAP_GET_BY_STATUS_URL = "/swap-requests/status/:status";
+
+    // Audit Log URLs
+    String AUDIT_GET_ALL_URL = "/audit-logs";
+    String AUDIT_ADD_URL = "/audit-logs/add";
+    String AUDIT_GET_BY_ACTION_URL = "/audit-logs/action/:action";
 }
