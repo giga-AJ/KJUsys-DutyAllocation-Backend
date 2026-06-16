@@ -161,4 +161,40 @@ public class DutyService extends MongoDataAccess {
 
         return true;
     }
+
+    public boolean updateDuty(
+            String dutyId,
+            Document updatedDuty
+    ) throws DataAccessException {
+
+        Document filter =
+                new Document("_id",
+                        new org.bson.types.ObjectId(dutyId));
+
+        Document update =
+                new Document("$set", updatedDuty);
+
+        var result =
+                mongoDatabase
+                        .getCollection(CollectionNames.DUTIES)
+                        .updateOne(filter, update);
+
+        return result.getModifiedCount() > 0;
+    }
+
+    public boolean deleteDuty(
+            String dutyId
+    ) throws DataAccessException {
+
+        Document filter =
+                new Document("_id",
+                        new org.bson.types.ObjectId(dutyId));
+
+        var result =
+                mongoDatabase
+                        .getCollection(CollectionNames.DUTIES)
+                        .deleteOne(filter);
+
+        return result.getDeletedCount() > 0;
+    }
 }

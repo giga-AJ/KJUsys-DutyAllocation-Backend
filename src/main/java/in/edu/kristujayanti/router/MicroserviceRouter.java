@@ -132,6 +132,18 @@ public class MicroserviceRouter extends RouterBase {
                 );
 
                 addRoute(
+                        HttpMethod.PUT,
+                        MicroserviceRoutingURLNames.DUTY_UPDATE_URL,
+                        new DutyHandler(dutyService)
+                );
+
+                addRoute(
+                        HttpMethod.DELETE,
+                        MicroserviceRoutingURLNames.DUTY_DELETE_URL,
+                        new DutyHandler(dutyService)
+                );
+
+                addRoute(
                         HttpMethod.GET,
                         MicroserviceRoutingURLNames.ASSIGNMENT_GET_ALL_URL,
                         new DutyAssignmentHandler(dutyAssignmentService)

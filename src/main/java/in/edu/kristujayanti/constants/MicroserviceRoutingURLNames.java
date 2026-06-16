@@ -17,6 +17,8 @@ public interface MicroserviceRoutingURLNames {
     String DUTY_GET_ALL_URL              = "/duties";
     String DUTY_GET_BY_ID_URL            = "/duties/:id";
     String DUTY_ADD_URL                  = "/duties/add";
+    String DUTY_UPDATE_URL = "/duties/update/:id";
+    String DUTY_DELETE_URL = "/duties/:id";
 
     // Duty Assignment URLs
     String ASSIGNMENT_GET_ALL_URL = "/assignments";

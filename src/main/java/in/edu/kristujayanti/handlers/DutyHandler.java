@@ -51,6 +51,29 @@ public class DutyHandler implements Handler<RoutingContext> {
 
                 handleCreateDuty(routingContext, response);
 
+            } else if (path.contains("/duties/update/")
+                    && routingContext.request().method().name().equals("PUT")) {
+
+                String id = routingContext.pathParam("id");
+
+                handleUpdateDuty(
+                        routingContext,
+                        response,
+                        id
+                );
+
+            } else if (path.contains("/duties/")
+                    && routingContext.request().method().name().equals("DELETE")) {
+
+                String id = routingContext.pathParam("id");
+
+                handleDeleteDuty(
+                        response,
+                        id
+                );
+
+
+
             } else {
 
                 ResponseUtil.createResponse(
@@ -190,6 +213,114 @@ public class DutyHandler implements Handler<RoutingContext> {
                     new JsonObject()
                             .put("message",
                                     "Duty added successfully"),
+                    new JsonArray()
+            );
+
+        } catch (Exception e) {
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.ERROR,
+                    StatusCode.INTERNAL_SERVER_ERROR,
+                    new JsonObject()
+                            .put("error", e.getMessage()),
+                    new JsonArray()
+            );
+        }
+    }
+
+    private void handleUpdateDuty(
+            RoutingContext routingContext,
+            HttpServerResponse response,
+            String id
+    ) {
+
+        try {
+
+            JsonObject body =
+                    routingContext.body().asJsonObject();
+
+            Document updateDoc =
+                    Document.parse(body.encode());
+
+            boolean updated =
+                    dutyService.updateDuty(
+                            id,
+                            updateDoc
+                    );
+
+            if (!updated) {
+
+                ResponseUtil.createResponse(
+                        response,
+                        ResponseType.ERROR,
+                        StatusCode.FILE_NOT_FOUND,
+                        new JsonObject()
+                                .put("error", "Duty not found"),
+                        new JsonArray()
+                );
+
+                return;
+            }
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.SUCCESS,
+                    StatusCode.TWOHUNDRED,
+                    new JsonObject()
+                            .put(
+                                    "message",
+                                    "Duty updated successfully"
+                            ),
+                    new JsonArray()
+            );
+
+        } catch (Exception e) {
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.ERROR,
+                    StatusCode.INTERNAL_SERVER_ERROR,
+                    new JsonObject()
+                            .put("error", e.getMessage()),
+                    new JsonArray()
+            );
+        }
+    }
+
+    private void handleDeleteDuty(
+            HttpServerResponse response,
+            String id
+    ) {
+
+        try {
+
+            boolean deleted =
+                    dutyService.deleteDuty(id);
+
+            if (!deleted) {
+
+                ResponseUtil.createResponse(
+                        response,
+                        ResponseType.ERROR,
+                        StatusCode.FILE_NOT_FOUND,
+                        new JsonObject()
+                                .put("error", "Duty not found"),
+                        new JsonArray()
+                );
+
+                return;
+            }
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.SUCCESS,
+                    StatusCode.TWOHUNDRED,
+                    new JsonObject()
+                            .put(
+                                    "message",
+                                    "Duty deleted successfully"
+                            ),
                     new JsonArray()
             );
 
