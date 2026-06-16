@@ -10,6 +10,8 @@ public interface MicroserviceRoutingURLNames {
     String FACULTY_GET_BY_ID_URL = "/faculty/:id";
     String FACULTY_ADD_URL = "/faculty/add";
     String FACULTY_UPDATE_STATUS_URL = "/faculty/update-status/:id";
+    String FACULTY_DELETE_URL="/faculty/:id";
+    String FACULTY_EDIT_URL="/faculty/edit/:id";
 
     // Duty URLs
     String DUTY_GET_ALL_URL              = "/duties";

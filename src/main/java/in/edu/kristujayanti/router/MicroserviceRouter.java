@@ -69,7 +69,8 @@ public class MicroserviceRouter extends RouterBase {
                 Set<HttpMethod> allowMethods = Stream.of(
                         HttpMethod.GET,
                         HttpMethod.POST,
-                        HttpMethod.PUT).collect(Collectors.toSet());
+                        HttpMethod.PUT,
+                        HttpMethod.DELETE).collect(Collectors.toSet());
 
                 // Setup CORS and Body Handlers
                 this.router.route().handler(CorsHandler.create()
@@ -100,6 +101,16 @@ public class MicroserviceRouter extends RouterBase {
                 addRoute(
                         HttpMethod.PUT,
                         MicroserviceRoutingURLNames.FACULTY_UPDATE_STATUS_URL,
+                        new FacultyHandler(facultyService)
+                );
+                addRoute(
+                        HttpMethod.DELETE,
+                        MicroserviceRoutingURLNames.FACULTY_DELETE_URL,
+                        new FacultyHandler(facultyService)
+                );
+                addRoute(
+                        HttpMethod.PUT,
+                        MicroserviceRoutingURLNames.FACULTY_EDIT_URL,
                         new FacultyHandler(facultyService)
                 );
                 addRoute(

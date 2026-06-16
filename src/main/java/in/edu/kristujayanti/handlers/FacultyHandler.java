@@ -50,12 +50,12 @@ public class FacultyHandler implements Handler<RoutingContext> {
                 handleGetAllFaculty(routingContext, response);
 
                 // GET /faculty/:id — get one faculty
-            } else if (path.contains("/faculty/")
+            }
+            else if (path.contains("/faculty/")
                     && routingContext.request().method().name().equals("GET")) {
 
                 String id = routingContext.pathParam("id");
                 handleGetFacultyById(response, id);
-
 
 
             } else if (path.endsWith("/faculty/add")
@@ -63,6 +63,15 @@ public class FacultyHandler implements Handler<RoutingContext> {
 
                 handleCreateFaculty(routingContext, response);
 
+            }else if (path.contains("/faculty/edit/")
+                    && routingContext.request().method().name().equals("PUT")) {
+
+                String id = routingContext.pathParam("id");
+                handleEditFaculty(
+                        routingContext,
+                        response,
+                        id
+                );
             } else if (path.contains("/faculty")
                     && routingContext.request().method().name().equals("PUT")) {
 
@@ -284,4 +293,94 @@ public class FacultyHandler implements Handler<RoutingContext> {
             String id
     ) {
 
-    }}// ← end of class
+        try {
+
+            boolean deleted =
+                    facultyService.deleteFaculty(id);
+
+            if (!deleted) {
+
+                ResponseUtil.createResponse(
+                        response,
+                        ResponseType.ERROR,
+                        StatusCode.FILE_NOT_FOUND,
+                        new JsonObject()
+                                .put("error",
+                                        "Faculty not found"),
+                        new JsonArray()
+                );
+                return;
+            }
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.SUCCESS,
+                    StatusCode.TWOHUNDRED,
+                    new JsonObject()
+                            .put("message",
+                                    "Faculty deleted successfully"),
+                    new JsonArray()
+            );
+
+        } catch (Exception e) {
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.ERROR,
+                    StatusCode.INTERNAL_SERVER_ERROR,
+                    new JsonObject()
+                            .put("error", e.getMessage()),
+                    new JsonArray()
+            );
+        }
+    }
+    private void handleEditFaculty(
+            RoutingContext routingContext,
+            HttpServerResponse response,
+            String id
+    ) {
+
+        try {
+
+            JsonObject body =
+                    routingContext.body().asJsonObject();
+
+            boolean updated =
+                    facultyService.updateFaculty(id, body);
+
+            if (!updated) {
+
+                ResponseUtil.createResponse(
+                        response,
+                        ResponseType.ERROR,
+                        StatusCode.FILE_NOT_FOUND,
+                        new JsonObject()
+                                .put("error", "Faculty not found"),
+                        new JsonArray()
+                );
+                return;
+            }
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.SUCCESS,
+                    StatusCode.TWOHUNDRED,
+                    new JsonObject()
+                            .put("message",
+                                    "Faculty updated successfully"),
+                    new JsonArray()
+            );
+
+        } catch (Exception e) {
+
+            ResponseUtil.createResponse(
+                    response,
+                    ResponseType.ERROR,
+                    StatusCode.INTERNAL_SERVER_ERROR,
+                    new JsonObject()
+                            .put("error", e.getMessage()),
+                    new JsonArray()
+            );
+        }
+    }
+}

@@ -8,7 +8,7 @@ import in.edu.kristujayanti.dbaccess.MongoDataAccess;
 import in.edu.kristujayanti.exception.DataAccessException;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
+import io.vertx.core.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -341,4 +341,66 @@ public class FacultyService extends MongoDataAccess {
 
         return result.getModifiedCount() > 0;
     }
+    // ─────────────────────────────────────────
+// 7. DELETE FACULTY
+// Powers → Faculty Creation Screen
+// ─────────────────────────────────────────
+    public boolean deleteFaculty(String employeeId)
+            throws DataAccessException {
+
+        LOGGER.info("Deleting faculty {}", employeeId);
+
+        Document filter =
+                new Document("employeeId", employeeId);
+
+        var result = mongoDatabase
+                .getCollection(CollectionNames.FACULTY)
+                .deleteOne(filter);
+
+        return result.getDeletedCount() > 0;
+    }
+// 7. DELETE FACULTY
+// Powers → Faculty Creation Screen
+// ─────────────────────────────────────────
+public boolean updateFaculty(
+        String employeeId,
+        JsonObject body
+) throws DataAccessException {
+
+    Document filter =
+            new Document("employeeId", employeeId);
+
+    Document updateFields = new Document();
+
+    if(body.getString("name") != null)
+        updateFields.append("name", body.getString("name"));
+
+    if(body.getString("email") != null)
+        updateFields.append("email", body.getString("email"));
+
+    if(body.getString("department") != null)
+        updateFields.append("department", body.getString("department"));
+
+    if(body.getString("designation") != null)
+        updateFields.append("designation", body.getString("designation"));
+
+    if(body.getString("role") != null)
+        updateFields.append("role", body.getString("role"));
+
+    if(body.getString("status") != null)
+        updateFields.append("status", body.getString("status"));
+
+    if(body.getString("profilePhoto") != null)
+        updateFields.append("profilePhoto", body.getString("profilePhoto"));
+
+    Document update =
+            new Document("$set", updateFields);
+
+    var result =
+            mongoDatabase
+                    .getCollection(CollectionNames.FACULTY)
+                    .updateOne(filter, update);
+
+    return result.getModifiedCount() > 0;
+}
 }
