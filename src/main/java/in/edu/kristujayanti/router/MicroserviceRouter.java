@@ -179,6 +179,18 @@ public class MicroserviceRouter extends RouterBase {
                 );
 
                 addRoute(
+                        HttpMethod.PUT,
+                        MicroserviceRoutingURLNames.SWAP_ADMIN_APPROVE_URL,
+                        new SwapRequestHandler(swapRequestService)
+                );
+
+                addRoute(
+                        HttpMethod.PUT,
+                        MicroserviceRoutingURLNames.SWAP_ADMIN_REJECT_URL,
+                        new SwapRequestHandler(swapRequestService)
+                );
+
+                addRoute(
                         HttpMethod.GET,
                         MicroserviceRoutingURLNames.AUDIT_GET_ALL_URL,
                         new AuditLogHandler(auditLogService)

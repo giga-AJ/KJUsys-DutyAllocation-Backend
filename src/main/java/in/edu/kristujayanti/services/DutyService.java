@@ -49,7 +49,9 @@ public class DutyService extends MongoDataAccess {
                                 "date",
                                 "timeSlot",
                                 "venue",
-                                "description"
+                                "description",
+                                "dutyStatus",
+                                "requiredFaculty"
                         ),
                         excludeId()
                 ),

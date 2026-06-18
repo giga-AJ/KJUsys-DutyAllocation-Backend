@@ -17,8 +17,8 @@ public interface MicroserviceRoutingURLNames {
     String DUTY_GET_ALL_URL              = "/duties";
     String DUTY_GET_BY_ID_URL            = "/duties/:id";
     String DUTY_ADD_URL                  = "/duties/add";
-    String DUTY_UPDATE_URL = "/duties/update/:id";
-    String DUTY_DELETE_URL = "/duties/:id";
+    String DUTY_UPDATE_URL               = "/duties/update/:id";
+    String DUTY_DELETE_URL               = "/duties/:id";
 
     // Duty Assignment URLs
     String ASSIGNMENT_GET_ALL_URL = "/assignments";
@@ -29,6 +29,8 @@ public interface MicroserviceRoutingURLNames {
     String SWAP_GET_ALL_URL = "/swap-requests";
     String SWAP_ADD_URL = "/swap-requests/add";
     String SWAP_GET_BY_STATUS_URL = "/swap-requests/status/:status";
+    String SWAP_ADMIN_APPROVE_URL="/swap-requests/admin-approve/:id";
+    String SWAP_ADMIN_REJECT_URL="/swap-requests/admin-reject/:id";
 
     // Audit Log URLs
     String AUDIT_GET_ALL_URL = "/audit-logs";

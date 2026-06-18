@@ -56,4 +56,30 @@ public class SwapRequestService extends MongoDataAccess {
 
         return requestList;
     }
+    public boolean updateSwapStatus(
+            String requestId,
+            String status
+    ) throws DataAccessException {
+
+        Document filter =
+                new Document(
+                        "_id",
+                        new org.bson.types.ObjectId(requestId)
+                );
+
+        Document update =
+                new Document(
+                        "$set",
+                        new Document("status", status)
+                );
+
+        var result =
+                mongoDatabase
+                        .getCollection(
+                                CollectionNames.SWAP_REQUESTS
+                        )
+                        .updateOne(filter, update);
+
+        return result.getModifiedCount() > 0;
+    }
 }
